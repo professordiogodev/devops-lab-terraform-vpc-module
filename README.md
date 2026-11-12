@@ -22,11 +22,21 @@
 
 ## 🎬 The situation
 
-<p align="center"><img src="assets/gifs/situation.gif" width="300" alt="Animation: for_each = var.environments"></p>
+<p align="center"><img src="assets/gifs/situation.gif" width="300" alt="One module called three times to make three networks"></p>
 
-Clippy has a dev network and a staging network. They were built by copying the same Terraform folder, and the copies have drifted: one has a typo in a route, the other forgot a subnet. Now the new QA team wants a third network *this afternoon*, and nobody wants a third copy.
+```text
+DESIGN DOC - "One network module, many environments"            status: draft
+Problem   : dev and staging were built by copying the same Terraform folder.
+            The copies drifted: one has a typo in a route, the other forgot a subnet.
+Trigger   : the new QA team wants a third network this afternoon.
+Goal      : nobody makes a third copy.
+Proposal  : a module (a function with inputs, validation and outputs),
+            called once per environment with for_each over a map.
+Result    : adding QA is one line; removing it is the same line deleted.
+Open item : why is `count` dangerous for things that have identities?
+```
 
-You will turn the network into a **module**: a function with inputs, validation and outputs. You will call it once per environment with `for_each` over a map, so that adding the QA environment is **one line** and removing it is the same line deleted. You will also see, with your own eyes, why `count` is dangerous for things that have identities.
+You are the author and the first implementer. You will also answer the open item with your own eyes.
 
 > [!IMPORTANT]
 > **Your mission**
