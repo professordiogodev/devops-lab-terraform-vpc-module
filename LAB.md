@@ -26,6 +26,9 @@ You are the author and the first implementer. You will also answer the open item
 
 **Time:** 90-105 min | **Cost:** free (the NAT Gateway is off: it would cost money every hour) | **You need:** an AWS administrator user, the AWS CLI v2, Terraform 1.10 or newer, git and a terminal. Everything uses `us-east-1`.
 
+> **Note** You share one AWS account with your whole class, so every resource this lab creates carries a `student` tag with your **handle**: your IAM user name in lowercase (`.lab/handle.sh` prints it). The provided `data "external"` block in `terraform/main.tf` adds the tag for you, so leave it alone. The checks and the teardown proof only look at resources with your handle, and never touch your classmates'.
+
+
 ---
 
 ## Part 0 - Look around

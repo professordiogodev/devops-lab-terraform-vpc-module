@@ -14,6 +14,7 @@ def check(desc, ok, hint=""):
 
 
 def aws(*a):
+    a = tuple(p for x in a for p in (x.split(" ") if x.startswith("Name=tag:lab,") else (x,)))  # F holds two filters: lab and student
     try:
         return json.loads(subprocess.check_output(("aws",) + a + ("--output", "json"), stderr=subprocess.DEVNULL, timeout=60) or "null")
     except Exception:
@@ -56,7 +57,9 @@ check("no state file, .terraform/ or tfvars committed", not [f for f in tracked 
 check("no AWS keys in the repository", sh("git grep -lE 'AKIA[0-9A-Z]{16}' -- . ':!.lab' ':!verify.sh'")[1].strip() == "")
 
 print("== The networks in AWS ==")
-F = "Name=tag:lab,Values=terraform-vpc-module"
+STUDENT = subprocess.run(["bash", os.path.join(ROOT, ".lab", "handle.sh")], capture_output=True, text=True).stdout.strip()
+print("Your handle (from your IAM user name): " + STUDENT)
+F = "Name=tag:lab,Values=terraform-vpc-module" + " Name=tag:student,Values=" + STUDENT
 vpcs = (aws("ec2", "describe-vpcs", "--filters", F) or {}).get("Vpcs", [])
 by = {next((t["Value"] for t in v.get("Tags", []) if t["Key"] == "Environment"), "?"): v for v in vpcs}
 check("exactly two VPCs, for dev and staging (qa was added and removed again)", sorted(by) == ["dev", "staging"], "found %s" % sorted(by))
